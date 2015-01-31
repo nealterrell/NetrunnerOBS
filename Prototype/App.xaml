@@ -1,0 +1,14 @@
+﻿<Application x:Class="NetrunnerOBS.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:NetrunnerOBS"
+             StartupUri="CardWindow.xaml">
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="FactionImages.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+            <local:AnrCardViewModel x:Key="vm"/>
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>
