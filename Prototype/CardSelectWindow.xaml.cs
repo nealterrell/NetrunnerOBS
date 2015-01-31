@@ -43,13 +43,19 @@ namespace NetrunnerOBS {
 			InitializeComponent();
 		}
 
+
 		public CardWindow(OBSElement config) {
 
 			mConfig = config; 
 			InitializeComponent();
 			this.Loaded += CardWindow_Loaded;
+			this.Closing += CardWindow_Closing;
 
+		}
 
+		void CardWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e) {
+			e.Cancel = true;
+			Hide();
 		}
 
 		void CardWindow_Loaded(object sender, RoutedEventArgs e) {
