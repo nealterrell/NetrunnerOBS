@@ -1,6 +1,5 @@
 ﻿using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Runtime.InteropServices;
@@ -8,21 +7,15 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Interop;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
-using System.Windows.Threading;
 using System.Xml.Linq;
 
 namespace NetrunnerOBS {
 	/// <summary>
-	/// Interaction logic for NetrunnerAdvancedSettings.xaml
+	/// Shows advanced options for Netrunner plugin.
 	/// </summary>
 	public partial class NetrunnerAdvancedSettings : Window {
+		// For hiding the "close" and upper-left "contol" window icons.
 		private const int GWL_STYLE = -16;
 		private const int WS_SYSMENU = 0x80000;
 		[DllImport("user32.dll", SetLastError = true)]
@@ -36,7 +29,8 @@ namespace NetrunnerOBS {
 			InitializeComponent();
 		}
 
-		public NetrunnerAdvancedSettings(CardViewModel model) : this() {
+		public NetrunnerAdvancedSettings(CardViewModel model)
+			: this() {
 			mModel = model;
 		}
 
@@ -47,8 +41,6 @@ namespace NetrunnerOBS {
 
 				Window waitWindow = new Window() {
 					SizeToContent = System.Windows.SizeToContent.WidthAndHeight,
-					//Height = 300,
-					//Width = 300,
 					WindowState = System.Windows.WindowState.Normal,
 					WindowStyle = System.Windows.WindowStyle.SingleBorderWindow,
 
@@ -56,7 +48,6 @@ namespace NetrunnerOBS {
 					ShowInTaskbar = false,
 					WindowStartupLocation = System.Windows.WindowStartupLocation.CenterOwner,
 
-					//Background = new SolidColorBrush(Color.FromArgb(255, 127, 127, 0)),
 					Title = "Downloading..."
 				};
 
@@ -76,6 +67,7 @@ namespace NetrunnerOBS {
 					var hwnd = new WindowInteropHelper(waitWindow).Handle;
 					SetWindowLong(hwnd, GWL_STYLE, GetWindowLong(hwnd, GWL_STYLE) & ~WS_SYSMENU);
 
+					// Async download the new card data so the window thread doesn't block.
 					Task task = new Task(() => {
 						try {
 							WebClient client = new WebClient();
@@ -90,10 +82,11 @@ namespace NetrunnerOBS {
 								MessageBox.Show("Please restart the program to load the new card list.", "Restart required",
 									MessageBoxButton.OK, MessageBoxImage.Information);
 							}));
-							//waitWindow.Close();
 						}
 						catch (Exception ex) {
+							// TODO: better error handling
 							MessageBox.Show(ex.ToString());
+							waitWindow.Close();
 						}
 					});
 					task.Start();
@@ -110,8 +103,6 @@ namespace NetrunnerOBS {
 
 				Window waitWindow = new Window() {
 					SizeToContent = System.Windows.SizeToContent.WidthAndHeight,
-					//Height = 300,
-					//Width = 300,
 					WindowState = System.Windows.WindowState.Normal,
 					WindowStyle = System.Windows.WindowStyle.SingleBorderWindow,
 
@@ -119,7 +110,6 @@ namespace NetrunnerOBS {
 					ShowInTaskbar = false,
 					WindowStartupLocation = System.Windows.WindowStartupLocation.CenterOwner,
 
-					//Background = new SolidColorBrush(Color.FromArgb(255, 127, 127, 0)),
 					Title = "Downloading..."
 				};
 
@@ -135,9 +125,6 @@ namespace NetrunnerOBS {
 					Height = 12,
 				};
 
-				var label = new Label() {
-					Content = "Please wait...",
-				};
 				stack.Children.Add(progress);
 
 				waitWindow.Content = stack;
@@ -145,6 +132,8 @@ namespace NetrunnerOBS {
 					try {
 						var hwnd = new WindowInteropHelper(waitWindow).Handle;
 						SetWindowLong(hwnd, GWL_STYLE, GetWindowLong(hwnd, GWL_STYLE) & ~WS_SYSMENU);
+
+						// Create an async Task for each card
 						var downloadTasks = (
 							from card in mModel.CardDocument.Element("cards").Elements()
 							select Task.Run(() => {
@@ -152,18 +141,22 @@ namespace NetrunnerOBS {
 								try {
 									NetrunnerPlugin.DownloadCardFile(card, true);
 								}
-								catch { }
+								catch {
+									// TODO: better error handling
+								}
 								lock (progress) {
 									progress.Dispatcher.Invoke((Action)(() => { progress.Value++; }));
 								}
 							})
 						).ToArray();
 
+						// Once all the tasks have run, close the window.
+						// This is another Task so the window thread doesn't block.
 						Task.Run(() => {
 							Task.WaitAll(downloadTasks);
 							waitWindow.Dispatcher.BeginInvoke((Action)(() => {
 								waitWindow.Close();
-							})) ;
+							}));
 						});
 					}
 					catch (Exception ex) {
@@ -172,7 +165,6 @@ namespace NetrunnerOBS {
 				};
 
 				waitWindow.ShowDialog();
-
 			}
 		}
 	}

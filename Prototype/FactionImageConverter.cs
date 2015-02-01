@@ -13,15 +13,24 @@ namespace NetrunnerOBS {
 	class FactionImageConverter : IValueConverter {
 		static Dictionary<string, BitmapImage> mImages = new Dictionary<string, BitmapImage>();
 
+		/// <summary>
+		/// Converts a string faction code into an Image to show in the auto-complete
+		/// list. The images are saved as Embedded Resources in the project.
+		/// </summary>
+		/// <param name="value">"s" for Shaper; "c" for Criminal; "a" for Anarch; "h" for Haas-Bioroid;
+		/// "j" for Jinteki; "n" for NBN; "w" for Weyland Consortium; "-" for Neutral (both).
+		/// </param>
 		public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture) {
-			
+
 			try {
 				string faction = value as string;
 				if (mImages.ContainsKey(faction))
 					return mImages[faction];
 
 				var assembly = Assembly.GetExecutingAssembly();
-				using (Stream stream = assembly.GetManifestResourceStream("NetrunnerOBS.Properties.faction_" + faction + ".png")) {
+				using (Stream stream = assembly.GetManifestResourceStream(
+					"NetrunnerOBS.Properties.faction_" + faction + ".png")) {
+
 					var image = new BitmapImage();
 					image.BeginInit();
 					image.StreamSource = stream;
