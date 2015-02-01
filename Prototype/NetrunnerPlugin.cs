@@ -29,9 +29,11 @@ namespace NetrunnerOBS {
 		public static string NetrunnerDataFilePath { get; private set; }
 
 		public NetrunnerPlugin() {
+			API.Instance.Log("NetrunnerPlugin constructor start");
 			// Libraries referenced by our plugin are embedded in our DLL as resources.
 			// We must manually load them because they are not in the .NET search path.
 			AppDomain.CurrentDomain.AssemblyResolve += (sender, ea) => {
+				API.Instance.Log("NetrunnerPlugin resolving assembly {0}", ea.Name);
 				var resName = "NetrunnerOBS.Properties." + ea.Name.Split(',')[0] + ".dll";
 				using (Stream input = Assembly.GetExecutingAssembly().GetManifestResourceStream(resName)) {
 					return input != null
@@ -68,6 +70,7 @@ namespace NetrunnerOBS {
 		/// Called after the Plugin object has been constructed?
 		/// </summary>
 		public override bool LoadPlugin() {
+			API.Instance.Log("NetrunnerPlugin LoadPlugin");
 			API.Instance.AddImageSourceFactory(new NetrunnerCardImageSourceFactory());
 
 			if (!Directory.Exists(PluginDirectoryPath)) {
