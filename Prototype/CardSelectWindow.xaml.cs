@@ -1,28 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
-using Newtonsoft.Json.Converters;
-using Newtonsoft.Json.Linq;
-using Newtonsoft.Json;
-using System.IO;
 using System.Xml.Linq;
-using System.Drawing.Imaging;
-using System.Net;
-using System.Drawing;
 
 using OBSElement = CLROBS.XElement;
-using System.Timers;
 using System.Windows.Threading;
 
 namespace NetrunnerOBS {
@@ -44,6 +28,7 @@ namespace NetrunnerOBS {
 
 		public CardWindow(OBSElement config) {
 			mConfig = config;
+			mConfig.SetString("file", "");
 			InitializeComponent();
 			this.Loaded += CardWindow_Loaded;
 			this.Closing += CardWindow_Closing;
@@ -131,7 +116,7 @@ namespace NetrunnerOBS {
 
 		private void mCardText_KeyUp(object sender, KeyEventArgs e) {
 			// Shows the first card in the auto-complete list when Enter is pressed
-			if (e.Key == Key.Enter) {
+			if (e.Key == Key.Enter && mCardText.Text.Length > 0) {
 				// ItemsSource is not LINQ compatible, have to manually use 
 				// an enumerator.
 				var items = mCardText.ItemsSource;
@@ -160,7 +145,7 @@ namespace NetrunnerOBS {
 
 		private void mSubmitBtn_Click(object sender, RoutedEventArgs e) {
 			var card = GetCardWithPrefix();
-			if (card != null)
+			if (card != null && mCardText.Text.Length > 0)
 				SubmitCardName(card);
 		}
 
