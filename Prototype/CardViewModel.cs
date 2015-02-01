@@ -14,6 +14,13 @@ using System.Xml.Linq;
 using System.Windows;
 
 namespace NetrunnerOBS {
+	/// <summary>
+	/// This model is bound to by the AutoCompleteTextBox, and serves as the
+	/// list of cards to show to the user for a given query.
+	/// General flow: user types in text box, which is bound to the QueryText
+	/// property. Changes to QueryText causes a refresh to the QueryCollection
+	/// property, which returns an IEnumerable of XElements for cards.
+	/// </summary>
 	public class CardViewModel : INotifyPropertyChanged {
 		private XDocument mCardDocument;
 		private List<string> mWaitMessage = new List<string>() { "Please Wait..." };
@@ -40,6 +47,10 @@ namespace NetrunnerOBS {
 			get { return mWaitMessage; }
 		}
 		
+		/// <summary>
+		/// Gets changed automatically by the auto complete text box. A change
+		/// causes a refresh of the QueryCollection.
+		/// </summary>
 		public string QueryText {
 			get { return mQueryText; }
 			set {
@@ -59,6 +70,8 @@ namespace NetrunnerOBS {
 
 		private IEnumerable SelectCardsForQuery(string searchTerm) {
 			searchTerm = searchTerm.ToLower();
+			
+			// First select any cards that start with the search term.
 			IEnumerable<XElement> startsWithResults =
 				from card in mCardDocument.Element("cards").Elements("card")
 				where card.Element("title").Value.ToLower().StartsWith(searchTerm)
@@ -67,6 +80,7 @@ namespace NetrunnerOBS {
 			;
 
 			if (searchTerm.Length >= 3) {
+				// Then add any cards that contain the search term.
 				var containsResults =
 					from card in mCardDocument.Element("cards").Elements("card")
 					where card.Element("title").Value.ToLower().Contains(searchTerm)
