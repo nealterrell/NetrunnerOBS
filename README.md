@@ -4,7 +4,7 @@ A simple OBS (https://obsproject.com/) plugin to show Android Netrunner cards as
 
 To install:
 
-1. Install CLRHostPlugin: https://obsproject.com/forum/resources/clr-host-plugin.21/
+1. Install CLR Browser Source Plugin: https://obsproject.com/forum/resources/clr-browser-source-plugin.22/
 2. Download current NetrunnerOBS prototype release: https://drive.google.com/open?id=0B-_Wwk51wKI0R0RsbUg5RTFiMWs&authuser=0
 3. Place the file NetrunnerOBS.dll in the "CLRHostPlugin" folder of your OBS installation's "plugins" folder.
   1. This should be C:\Program Files\OBS\plugins\CLRHostPlugin; or in C:\Program Files (x86)\OBS\plugins\CLRHostPlugin
