@@ -1,40 +1,48 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using CLROBS;
-using System.IO;
-using System.Windows;
-using System.Net;
-using System.Xml.Linq;
-using Newtonsoft.Json.Linq;
-using Newtonsoft.Json;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-//using System.Windows.Shapes;
-using System.Drawing.Imaging;
-using System.Net;
 using System.Drawing;
+using System.Drawing.Imaging;
+using System.IO;
+using System.Linq;
+using System.Net;
 using System.Reflection;
+using System.Text;
+using System.Xml.Linq;
+
+using CLROBS;
+using Newtonsoft.Json;
 
 
 namespace NetrunnerOBS {
+	/// <summary>
+	/// The starting point for this plugin. Helps load resources and register
+	/// classes with the OBS API.
+	/// </summary>
 	public class NetrunnerPlugin : AbstractPlugin {
+		/// <summary>
+		/// An absolute path to the directory used to save images and card data.
+		/// </summary>
 		public static string PluginDirectoryPath { get; private set; }
 
+		/// <summary>
+		/// An absolute path to the Netrunner card xml file.
+		/// </summary>
 		public static string NetrunnerDataFilePath { get; private set; }
 
 		public NetrunnerPlugin() {
+			// Libraries referenced by our plugin are embedded in our DLL as resources.
+			// We must manually load them because they are not in the .NET search path.
 			AppDomain.CurrentDomain.AssemblyResolve += (sender, ea) => {
 				var resName = "NetrunnerOBS.Properties." + ea.Name.Split(',')[0] + ".dll";
-				 using (Stream input = Assembly.GetExecutingAssembly().GetManifestResourceStream(resName)) {
-                    return input != null
-                         ? Assembly.Load(StreamToBytes(input))
-                         : null;
-                }
+				using (Stream input = Assembly.GetExecutingAssembly().GetManifestResourceStream(resName)) {
+					return input != null
+						  ? Assembly.Load(StreamToBytes(input))
+						  : null;
+				}
 			};
-			Name = "Card image plugin";
+
+			Name = "Netrunner Card Plugin";
+			Description = "Shows Android Netrunner cards as a Source";
+
 			PluginDirectoryPath = Path.Combine(API.Instance.GetPluginDataPath(), "Netrunner");
 			NetrunnerDataFilePath =
 				Path.Combine(PluginDirectoryPath, "cardData_netrunner.xml");
@@ -56,6 +64,9 @@ namespace NetrunnerOBS {
 			}
 		}
 
+		/// <summary>
+		/// Called after the Plugin object has been constructed?
+		/// </summary>
 		public override bool LoadPlugin() {
 			API.Instance.AddImageSourceFactory(new NetrunnerCardImageSourceFactory());
 
@@ -63,8 +74,8 @@ namespace NetrunnerOBS {
 				Directory.CreateDirectory(PluginDirectoryPath);
 			}
 
+			// TODO: merge this with similar code in NetrunnerAdvancedSettings
 			if (!File.Exists(NetrunnerDataFilePath)) {
-
 				WebClient client = new WebClient();
 				client.DownloadStringCompleted += client_DownloadStringCompleted;
 				client.DownloadStringAsync(new Uri("http://netrunnerdb.com/api/cards"));
@@ -83,8 +94,16 @@ namespace NetrunnerOBS {
 			return "http://www.netrunnerdb.com" + card.Element("imagesrc").Value.ToString();
 		}
 
+		/// <summary>
+		/// Downloads the image for the specified card (as an XElement) to the plugin
+		/// data directory. Blocks until the download is complete.
+		/// </summary>
+		/// <param name="card">The card to download via its "imagesrc" element value.</param>
+		/// <param name="overrideIfExists">True if the card should be downloaded 
+		/// even if its image already exists.</param>
+		/// <returns>an absolute path to the card's image on disk, or null if the
+		/// download failed.</returns>
 		public static string DownloadCardFile(System.Xml.Linq.XElement card, bool overrideIfExists) {
-
 			string remoteName = GetCardFileUrl(card);
 			if (remoteName != null && !string.IsNullOrEmpty(card.Element("imagesrc").Value)) {
 				string newFileName = System.IO.Path.Combine(
@@ -120,6 +139,7 @@ namespace NetrunnerOBS {
 			}
 			return null;
 		}
+
 		private static ImageCodecInfo GetEncoderInfo(ImageFormat format) {
 			return ImageCodecInfo.GetImageDecoders().SingleOrDefault(c => c.FormatID == format.Guid);
 		}

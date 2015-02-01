@@ -68,7 +68,7 @@
             ItemsSource="{Binding Source={StaticResource xml}}" 
             ItemTemplateSelector="{StaticResource TemplateSelector}"
             Binding="{Binding Path=Element[title].Value}" 
-            MaxCompletions="20" KeyUp="filenameText_KeyUp"/>
+            MaxCompletions="20" KeyUp="mCardText_KeyUp"/>
             <Button x:Name="mSubmitBtn" Margin="0,0,0,0" Content="Show Card" Click="mSubmitBtn_Click" Height="24" Width="70"/>
 
          </StackPanel>

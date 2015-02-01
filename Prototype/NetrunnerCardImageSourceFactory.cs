@@ -6,44 +6,44 @@ using System.Threading.Tasks;
 using CLROBS;
 using System.Windows;
 
-namespace NetrunnerOBS
-{
-    public class NetrunnerCardImageSourceFactory : AbstractImageSourceFactory
-    {
-        static CardWindow mConfiguration;
-        static List<NetrunnerCardImageSource> mSources = new List<NetrunnerCardImageSource>();
+namespace NetrunnerOBS {
+	/// <summary>
+	/// Factory registered with the OBS API so OBS can create our source object
+	/// when needed.
+	/// </summary>
+	public class NetrunnerCardImageSourceFactory : AbstractImageSourceFactory {
+		// Kind of hacky: a singleton CardWindow connects to all sources.
+		static CardWindow mConfiguration;
+		static List<NetrunnerCardImageSource> mSources = new List<NetrunnerCardImageSource>();
 
-        public NetrunnerCardImageSourceFactory()
-        {
-            ClassName = "CardImageSourceClass";
-            DisplayName = "Netrunner Card";
-        }
-        public override ImageSource Create(XElement data)
-        {
-           var source = new NetrunnerCardImageSource(data);
-            mSources.Add(source);
-            return source;
-        }
+		public NetrunnerCardImageSourceFactory() {
+			ClassName = "CardImageSourceClass";
+			DisplayName = "Netrunner Card";
+		}
 
-        public override bool ShowConfiguration(XElement data)
-        {
-			  try {
-				  if (mConfiguration == null) {
-					  mConfiguration = new CardWindow(data);
-					  mConfiguration.CardChanged += mConfiguration_CardChanged;
-				  }
-				  mConfiguration.Show();
-			  }
-			  catch (Exception e) {
-				  MessageBox.Show(e.ToString());
-			  }
-            return true;
-        }
+		public override ImageSource Create(XElement data) {
+			var source = new NetrunnerCardImageSource(data);
+			mSources.Add(source);
+			return source;
+		}
 
-        void mConfiguration_CardChanged(object sender, CardChangedEventArgs e)
-        {
-            foreach (var source in mSources)
-                source.UpdateSettings();
-        }
-    }
+		public override bool ShowConfiguration(XElement data) {
+			try {
+				if (mConfiguration == null) {
+					mConfiguration = new CardWindow(data);
+					mConfiguration.CardChanged += mConfiguration_CardChanged;
+				}
+				mConfiguration.Show();
+			}
+			catch (Exception e) {
+				MessageBox.Show(e.ToString());
+			}
+			return true;
+		}
+
+		void mConfiguration_CardChanged(object sender, CardChangedEventArgs e) {
+			foreach (var source in mSources)
+				source.UpdateSettings();
+		}
+	}
 }

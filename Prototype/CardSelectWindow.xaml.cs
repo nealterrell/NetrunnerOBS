@@ -31,11 +31,10 @@ namespace NetrunnerOBS {
 	}
 
 	/// <summary>
-	/// Interaction logic for CardWindow.xaml
+	/// Card selection window for Netrunner plugin. 
 	/// </summary>
 	public partial class CardWindow : Window {
 		private List<DispatcherTimer> mActiveTimers = new List<DispatcherTimer>();
-		
 		private OBSElement mConfig;
 
 		public event EventHandler<CardChangedEventArgs> CardChanged;
@@ -43,14 +42,11 @@ namespace NetrunnerOBS {
 			InitializeComponent();
 		}
 
-
 		public CardWindow(OBSElement config) {
-
-			mConfig = config; 
+			mConfig = config;
 			InitializeComponent();
 			this.Loaded += CardWindow_Loaded;
 			this.Closing += CardWindow_Closing;
-
 		}
 
 		void CardWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e) {
@@ -133,12 +129,11 @@ namespace NetrunnerOBS {
 				});
 		}
 
-		
-
-		
-
-		private void filenameText_KeyUp(object sender, KeyEventArgs e) {
+		private void mCardText_KeyUp(object sender, KeyEventArgs e) {
+			// Shows the first card in the auto-complete list when Enter is pressed
 			if (e.Key == Key.Enter) {
+				// ItemsSource is not LINQ compatible, have to manually use 
+				// an enumerator.
 				var items = mCardText.ItemsSource;
 				var enumerator = items.GetEnumerator();
 				if (enumerator.MoveNext()) {
@@ -146,39 +141,27 @@ namespace NetrunnerOBS {
 					if (first != null)
 						SubmitCardName(first);
 				}
-
 			}
-
 		}
 
+		/// <summary>
+		/// Returns the first card (ordered by title) that starts with the given
+		/// prefix string.
+		/// </summary>
 		private XElement GetCardWithPrefix() {
 			var model = this.FindResource("vm") as CardViewModel;
-			var x = (
+			return (
 				from card in model.CardDocument.Element("cards").Elements("card")
 				where card.Element("title").Value.ToLower().StartsWith(mCardText.Text.ToLower())
 				orderby card.Element("title").Value
 				select card
 			).FirstOrDefault();
-			return x;
 		}
-
 
 		private void mSubmitBtn_Click(object sender, RoutedEventArgs e) {
-			var x = GetCardWithPrefix();
-			if (x != null)
-				SubmitCardName(x);
-		}
-
-
-		private void mCardText_TextChanged(object sender, TextChangedEventArgs e) {
-			//var model = this.FindResource("vm") as AnrCardViewModel;
-			//var x = (
-			//	 from card in model.CardDocument.Element("cards").Elements("card")
-			//	 where card.Element("title").Value.ToLower() == mCardText.Text.ToLower()
-			//	 select card
-			// ).FirstOrDefault();
-			//if (x != null)
-			//	SubmitCardName(x);
+			var card = GetCardWithPrefix();
+			if (card != null)
+				SubmitCardName(card);
 		}
 
 		private void mAutoHideBox_Checked(object sender, RoutedEventArgs e) {
