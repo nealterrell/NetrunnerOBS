@@ -70,7 +70,7 @@
             Binding="{Binding Path=Element[title].Value}" 
             MaxCompletions="20" KeyUp="mCardText_KeyUp"/>
             <Button x:Name="mSubmitBtn" Margin="0,0,0,0" Content="Show Card" Click="mSubmitBtn_Click" Height="24" Width="70"/>
-
+            <Button x:Name="mHideBtn" Content="Hide Card" Click="mHideBtn_Click" Visibility="Hidden" Margin="8,0,0,0" Width="70" />
          </StackPanel>
          <StackPanel VerticalAlignment="Center" Orientation="Horizontal">
 

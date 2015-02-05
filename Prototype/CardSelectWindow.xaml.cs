@@ -82,8 +82,7 @@ namespace NetrunnerOBS {
 				var timer = new DispatcherTimer();
 				timer.Interval = TimeSpan.FromSeconds((double)mHideUpDown.Value.Value);
 				timer.Tick += (o, ea) => {
-					mConfig.SetString("file", "");
-					DispatchCardChanged();
+					HideCard();
 					((DispatcherTimer)o).Stop();
 
 					lock (mActiveTimers) {
@@ -95,6 +94,11 @@ namespace NetrunnerOBS {
 				}
 				timer.Start();
 			}
+		}
+
+		private void HideCard() {
+			mConfig.SetString("file", "");
+			DispatchCardChanged();
 		}
 
 		private void StopAutoHideTimers() {
@@ -152,14 +156,20 @@ namespace NetrunnerOBS {
 		private void mAutoHideBox_Checked(object sender, RoutedEventArgs e) {
 			if (!mAutoHideBox.IsChecked.Value) {
 				StopAutoHideTimers();
+				mHideBtn.Visibility = System.Windows.Visibility.Visible;
 			}
 			else if (mAutoHideBox.IsChecked.HasValue) {
 				StartAutoHideTimer();
+				mHideBtn.Visibility = System.Windows.Visibility.Hidden;
 			}
 		}
 
 		private void mAdvancedBtn_Click(object sender, RoutedEventArgs e) {
 			new NetrunnerAdvancedSettings(this.FindResource("vm") as CardViewModel).ShowDialog();
+		}
+
+		private void mHideBtn_Click(object sender, RoutedEventArgs e) {
+			HideCard();
 		}
 	}
 }
