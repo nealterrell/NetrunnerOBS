@@ -41,20 +41,12 @@ namespace NetrunnerOBS {
 
 					WriteableBitmap wb = new WriteableBitmap(src);
 
-					mCardTexture = GS.CreateTexture((UInt32)wb.PixelWidth, (UInt32)wb.PixelHeight, GSColorFormat.GS_BGRA, null, false, false);
+					mCardTexture = GS.CreateTexture((UInt32)wb.PixelWidth, (UInt32)wb.PixelHeight, 
+						GSColorFormat.GS_BGRA, null, false, false);
 
-					mCardTexture.SetImage(wb.BackBuffer, GSImageFormat.GS_IMAGEFORMAT_BGRA, (UInt32)(wb.PixelWidth * 4));
+					mCardTexture.SetImage(wb.BackBuffer, GSImageFormat.GS_IMAGEFORMAT_BGRA,
+						(UInt32)(wb.PixelWidth * 4));
 
-
-					/*src = new BitmapImage();
-					src.BeginInit();
-					src.UriSource = new Uri(Path.Combine(CardImagePlugin.PluginDirectoryPath, "white.png"));
-					src.EndInit();
-
-					wb = new WriteableBitmap(src);
-					mDebugTexture = GS.CreateTexture((UInt32)wb.PixelWidth, (UInt32)wb.PixelHeight, GSColorFormat.GS_BGRA, null, false, false);
-					mDebugTexture.SetImage(wb.BackBuffer, GSImageFormat.GS_IMAGEFORMAT_BGRA, (UInt32)(wb.PixelWidth * 4));
-					*/
 					//config.Parent.SetInt("cx", wb.PixelWidth);
 					//config.Parent.SetInt("cy", wb.PixelHeight);
 
@@ -73,33 +65,26 @@ namespace NetrunnerOBS {
 			XElement dataElement = mConfig.GetElement("data");
 			LoadTexture(mConfig.GetString("file"));
 
-//			API.Instance.Log("!!!!!!!!!!!!!!!!!!!!!!!!!{0}", mConfig.Parent.
-//);
-			//Api.Log("!!!!!!!{0}", mConfig.Parent.Name);
-			//foreach (var item in Enumerable.Range(0, mConfig.Parent.ElementCount())) {
-			//	Api.Log("Property {0}: ", item);
-			//	Api.Log("Value {0}", mConfig.Parent.GetElementById(item).Name);
-			//}
 			if (mCardTexture != null) {
 				UInt32 width = (UInt32)mConfig.GetInt("width", (int)mCardTexture.Width);
 				UInt32 height = (UInt32)mConfig.GetInt("height", (int)mCardTexture.Height);
+				mConfig.SetInt("width", (int)width);
+				mConfig.SetInt("height", (int)height);
 
-				Size.X = width + 40;
-				Size.Y = height + 40;
+				Size.X = width;
+				Size.Y = height;
 
-				//API.Instance.Log("**************************Size: {0} x {1}", width, height);
-				mConfig.Parent.SetInt("cx", (Int32)Size.X);
-				mConfig.Parent.SetInt("cy", (Int32)Size.Y);
+				//mConfig.Parent.SetInt("cx", (Int32)Size.X);
+				//mConfig.Parent.SetInt("cy", (Int32)Size.Y);
 			}
-			//MessageBox.Show("Showing image " + config.GetString("file"));
 		}
 
 		override public void Render(float x, float y, float width, float height) {
 			lock (textureLock) {
 
 				if (mCardTexture != null) {
-					GS.DrawSprite(mCardTexture, 0xFFFFFFFF, x + 10, y + 10,
-						x + mCardTexture.Width + 10, y + mCardTexture.Height + 10);
+					GS.DrawSprite(mCardTexture, 0xFFFFFFFF, x, y,
+						x + width, y + height);
 				//	GS.DrawSprite(mDebugTexture, 0xFFFFFFFF, 0, 0, Size.X, Size.Y);
 				}
 			}
