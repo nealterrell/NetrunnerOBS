@@ -24,7 +24,7 @@ namespace NetrunnerOBS {
 		public override ImageSource Create(XElement data) {
 			// Clear the file data, so the stream always starts with a blank card.
 			data.SetString("file", "");
-
+			
 			var source = new NetrunnerCardImageSource(data);
 			mSources.Add(source);
 			return source;
@@ -45,6 +45,10 @@ namespace NetrunnerOBS {
 		}
 
 		void mConfiguration_CardChanged(object sender, CardChangedEventArgs e) {
+			UpdateSourceSettings();
+		}
+
+		private static void UpdateSourceSettings() {
 			foreach (var source in mSources)
 				source.UpdateSettings();
 		}
