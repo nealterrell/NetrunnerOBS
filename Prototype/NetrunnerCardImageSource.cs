@@ -14,14 +14,14 @@ namespace NetrunnerOBS {
 	class NetrunnerCardImageSource : AbstractImageSource {
 		private Object textureLock = new Object();
 		private Texture mCardTexture = null;
-		//private Texture mDebugTexture;
 		private XElement mConfig;
 
+		private const int DEFAULT_WIDTH = 300;
+		private const int DEFAULT_HEIGHT = 418;
+
 		public NetrunnerCardImageSource(XElement config) {
-			//MessageBox.Show("Construct");
 			this.mConfig = config;
 			UpdateSettings();
-
 		}
 
 		private void LoadTexture(String imageFile) {
@@ -47,12 +47,7 @@ namespace NetrunnerOBS {
 					mCardTexture.SetImage(wb.BackBuffer, GSImageFormat.GS_IMAGEFORMAT_BGRA,
 						(UInt32)(wb.PixelWidth * 4));
 
-					//config.Parent.SetInt("cx", wb.PixelWidth);
-					//config.Parent.SetInt("cy", wb.PixelHeight);
-
-					//Size.X = (float)wb.PixelWidth;
-					//Size.Y = (float)wb.PixelHeight;
-
+					
 				}
 				else {
 					mCardTexture = null;
@@ -66,16 +61,30 @@ namespace NetrunnerOBS {
 			LoadTexture(mConfig.GetString("file"));
 
 			if (mCardTexture != null) {
-				UInt32 width = (UInt32)mConfig.GetInt("width", (int)mCardTexture.Width);
-				UInt32 height = (UInt32)mConfig.GetInt("height", (int)mCardTexture.Height);
-				mConfig.SetInt("width", (int)width);
-				mConfig.SetInt("height", (int)height);
+				int width = mConfig.GetInt("width", (int)mCardTexture.Width);
+				int height = mConfig.GetInt("height", (int)mCardTexture.Height);
+				mConfig.SetInt("width", width);
+				mConfig.SetInt("height", height);
+
+				int cx = mConfig.Parent.GetInt("cx", width);
+				int cy = mConfig.Parent.GetInt("cy", height);
+				//Api.Log("cx: {0}, cy: {1}", cx, cy);
+
+				mConfig.Parent.SetInt("cx", cx == 1 ? width : cx);
+				mConfig.Parent.SetInt("cy", cy == 1 ? height : cy); ;
 
 				Size.X = width;
 				Size.Y = height;
-
-				//mConfig.Parent.SetInt("cx", (Int32)Size.X);
-				//mConfig.Parent.SetInt("cy", (Int32)Size.Y);
+				//Api.Log("SIZE: {0}x{1}", Size.X, Size.Y);
+			}
+			else {
+				mConfig.Parent.SetInt("cx", DEFAULT_WIDTH);
+				mConfig.Parent.SetInt("cy", DEFAULT_HEIGHT);
+				mConfig.SetInt("width", DEFAULT_WIDTH);
+				mConfig.SetInt("height", DEFAULT_HEIGHT);
+				Size.X = 300;
+				Size.Y = 418;
+				//Api.Log("SIZE: {0}x{1}", Size.X, Size.Y);
 			}
 		}
 
@@ -85,7 +94,6 @@ namespace NetrunnerOBS {
 				if (mCardTexture != null) {
 					GS.DrawSprite(mCardTexture, 0xFFFFFFFF, x, y,
 						x + width, y + height);
-				//	GS.DrawSprite(mDebugTexture, 0xFFFFFFFF, 0, 0, Size.X, Size.Y);
 				}
 			}
 		}
