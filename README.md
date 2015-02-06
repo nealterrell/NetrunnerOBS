@@ -18,6 +18,9 @@ Using the plugin:
 1. The first time the plugin loads, it will contact Netrunnderdb.com to download its public list of available cards. You can check to make sure this worked by finding this folder: %USERPROFILE%\AppData\Roaming\OBS\pluginData\Netrunner . 
 2. The Netrunner Card Source window lets you type in card names to show them on stream. You can change how long it takes for a card to disappear.
 3. To keep the download small, no card images come pre-loaded with the plugin. Each time you type a new card name in, the plugin will download an image for that card from Netrunnerdb.com, which takes a second. If you want to pre-fetch all card images, use the "Advanced..." button on the Netrunner Card Source window. You can also resynch the card list from this menu (when new cards are released, if things get corrupted, etc.).
-4. You will have to manually position the card image using OBS' built-in options by right-clicking the Netrunner Card Source in the OBS interface and using the Position/Size menu.
+4. You can position the card image using the Edit Scene button; drag and resize as needed.
+
+KNOWN ISSUES:
+1. Cards will be sized incorrectly the first time you add a Netrunner Card Image to your scene. To fix, close the Card Selection window and then double-click the Netrunner Card Image item in your Sources to reopen the window. The next card you show will be correctly sized.
 
 
