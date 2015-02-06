@@ -33,7 +33,7 @@ namespace NetrunnerOBS {
 			// Libraries referenced by our plugin are embedded in our DLL as resources.
 			// We must manually load them because they are not in the .NET search path.
 			AppDomain.CurrentDomain.AssemblyResolve += (sender, ea) => {
-				API.Instance.Log("NetrunnerPlugin resolving assembly {0}", ea.Name);
+				//API.Instance.Log("NetrunnerPlugin resolving assembly {0}", ea.Name);
 				var resName = "NetrunnerOBS.Properties." + ea.Name.Split(',')[0] + ".dll";
 				using (Stream input = Assembly.GetExecutingAssembly().GetManifestResourceStream(resName)) {
 					return input != null
