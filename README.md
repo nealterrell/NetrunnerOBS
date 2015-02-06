@@ -21,6 +21,7 @@ Using the plugin:
 4. You can position the card image using the Edit Scene button; drag and resize as needed.
 
 KNOWN ISSUES:
+
 1. Cards will be sized incorrectly the first time you add a Netrunner Card Image to your scene. To fix, close the Card Selection window and then double-click the Netrunner Card Image item in your Sources to reopen the window. The next card you show will be correctly sized.
 
 
