@@ -24,8 +24,17 @@ namespace NetrunnerOBS {
 
 			try {
 				string faction = value as string;
+				string availableFactions = "achjnsw-";
+				// If this is a new, unknown faction, use the neutral icon
+				if (availableFactions.IndexOf(faction) < 0)
+				{
+					faction = "-";
+				}
+
 				if (mImages.ContainsKey(faction))
+				{
 					return mImages[faction];
+				}
 
 				var assembly = Assembly.GetExecutingAssembly();
 				using (Stream stream = assembly.GetManifestResourceStream(
