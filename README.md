@@ -2,10 +2,12 @@
 
 A simple OBS (https://obsproject.com/) plugin to show Android Netrunner cards as a video Source.
 
+Full credit to nealterrell for the original plugin.  I just fixed a small bug after the Data & Destiny release and have uploaded the download link below so that people can use the fixed version until neal accepts the pull request on the original.
+
 To install:
 
 1. Install CLR Browser Source Plugin: https://obsproject.com/forum/resources/clr-browser-source-plugin.22/
-2. Download current NetrunnerOBS prototype release: https://drive.google.com/open?id=0B-_Wwk51wKI0R0RsbUg5RTFiMWs&authuser=0
+2. Download current NetrunnerOBS prototype release: https://drive.google.com/file/d/0BzG5PPXQxCj7emt6M1BndG05aWs/view?usp=sharing
 3. Place the file NetrunnerOBS.dll in the "CLRHostPlugin" folder of your OBS installation's "plugins" folder.
   1. This should be C:\Program Files\OBS\plugins\CLRHostPlugin; or in C:\Program Files (x86)\OBS\plugins\CLRHostPlugin
   2. If you do not have a CLRHostPlugin folder, see step 1.
