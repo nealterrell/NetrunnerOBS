@@ -24,7 +24,7 @@ namespace NetrunnerOBS {
 
 			try {
 				string faction = value as string;
-				string availableFactions = "achjnsw-";
+				string availableFactions = "acdhjnpsuw-";
 				// If this is a new, unknown faction, use the neutral icon
 				if (availableFactions.IndexOf(faction) < 0)
 				{
